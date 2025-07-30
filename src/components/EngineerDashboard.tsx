@@ -7,7 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Package, Plus, Clock, CheckCircle, XCircle, LogOut, User, MapPin, Calendar } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import CreateOrderForm from './CreateOrderForm';
-import Comments from './Comments';
+
 
 interface EngineerDashboardProps {
   user: any;
@@ -283,8 +283,6 @@ const EngineerDashboard = ({ user, onLogout }: EngineerDashboardProps) => {
                   <p className="text-sm text-gray-600">{order.materials}</p>
                 </div>
 
-                {/* Comentários */}
-                <Comments orderId={order.id} user={user} />
               </Card>
             ))}
           </div>
