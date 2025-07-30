@@ -64,7 +64,7 @@ const ManagerDashboard = ({ user, onLogout }: ManagerDashboardProps) => {
     const total = orders.length;
     const pending = orders.filter(order => order.status === 'pending').length;
     const myOrdersCount = myOrders.length;
-    const inProgress = orders.filter(order => order.status === 'approved' || order.status === 'in_progress').length;
+    const inProgress = orders.filter(order => order.status === 'quoting' || order.status === 'purchased' || order.status === 'shipping').length;
     const delivered = orders.filter(order => order.status === 'delivered').length;
     
     return { total, pending, myOrdersCount, inProgress, delivered };
@@ -73,9 +73,9 @@ const ManagerDashboard = ({ user, onLogout }: ManagerDashboardProps) => {
   const getStatusStep = (status: string) => {
     switch (status) {
       case 'pending': return 1;
-      case 'approved': return 2;
-      case 'in_progress': return 3;
-      case 'ready': return 4;
+      case 'quoting': return 2;
+      case 'purchased': return 3;
+      case 'shipping': return 4;
       case 'delivered': return 5;
       default: return 1;
     }
@@ -83,10 +83,10 @@ const ManagerDashboard = ({ user, onLogout }: ManagerDashboardProps) => {
 
   const getNextStatus = (status: string) => {
     switch (status) {
-      case 'pending': return 'approved';
-      case 'approved': return 'in_progress';
-      case 'in_progress': return 'ready';
-      case 'ready': return 'delivered';
+      case 'pending': return 'quoting';
+      case 'quoting': return 'purchased';
+      case 'purchased': return 'shipping';
+      case 'shipping': return 'delivered';
       default: return status;
     }
   };
@@ -94,9 +94,9 @@ const ManagerDashboard = ({ user, onLogout }: ManagerDashboardProps) => {
   const getNextStatusLabel = (status: string) => {
     switch (status) {
       case 'pending': return 'Em Cotação';
-      case 'approved': return 'Comprado';
-      case 'in_progress': return 'Saiu para Entrega';
-      case 'ready': return 'Entregue/Recebido';
+      case 'quoting': return 'Comprado';
+      case 'purchased': return 'Saiu para Entrega';
+      case 'shipping': return 'Entregue/Recebido';
       default: return '';
     }
   };
@@ -440,9 +440,9 @@ const ManagerDashboard = ({ user, onLogout }: ManagerDashboardProps) => {
                       </Badge>
                       <Badge variant="secondary">
                         {order.status === 'pending' ? 'Pendente' : 
-                         order.status === 'approved' ? 'Em Cotação' : 
-                         order.status === 'in_progress' ? 'Comprado' :
-                         order.status === 'ready' ? 'Saiu para Entrega' :
+                         order.status === 'quoting' ? 'Em Cotação' : 
+                         order.status === 'purchased' ? 'Comprado' :
+                         order.status === 'shipping' ? 'Saiu para Entrega' :
                          order.status === 'delivered' ? 'Entregue/Recebido' : 'Pendente'}
                       </Badge>
                     </div>
@@ -563,9 +563,9 @@ const ManagerDashboard = ({ user, onLogout }: ManagerDashboardProps) => {
                         }
                       >
                         {order.status === 'pending' ? 'Pendente' : 
-                         order.status === 'approved' ? 'Em Cotação' : 
-                         order.status === 'in_progress' ? 'Comprado' :
-                         order.status === 'ready' ? 'Saiu para Entrega' :
+                         order.status === 'quoting' ? 'Em Cotação' : 
+                         order.status === 'purchased' ? 'Comprado' :
+                         order.status === 'shipping' ? 'Saiu para Entrega' :
                          order.status === 'delivered' ? 'Entregue/Recebido' : 'Pendente'}
                       </Badge>
                     </div>
