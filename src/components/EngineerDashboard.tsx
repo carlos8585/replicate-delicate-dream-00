@@ -22,6 +22,28 @@ const EngineerDashboard = ({ user, onLogout }: EngineerDashboardProps) => {
 
   useEffect(() => {
     fetchOrders();
+
+    // Set up real-time subscription for order updates
+    const channel = supabase
+      .channel('engineer-orders')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'orders',
+          filter: `engineer_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Order update received:', payload);
+          fetchOrders(); // Refresh orders when any change occurs
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user.id]);
 
   const fetchOrders = async () => {
@@ -48,7 +70,7 @@ const EngineerDashboard = ({ user, onLogout }: EngineerDashboardProps) => {
   const getStats = () => {
     const total = orders.length;
     const pending = orders.filter(order => order.status === 'pending').length;
-    const inProgress = orders.filter(order => order.status === 'approved').length;
+    const inProgress = orders.filter(order => ['quoting', 'purchased', 'shipping'].includes(order.status)).length;
     const delivered = orders.filter(order => order.status === 'delivered').length;
     
     return { total, pending, inProgress, delivered };
@@ -57,9 +79,9 @@ const EngineerDashboard = ({ user, onLogout }: EngineerDashboardProps) => {
   const getStatusStep = (status: string) => {
     switch (status) {
       case 'pending': return 1;
-      case 'approved': return 2;
-      case 'in_progress': return 3;
-      case 'ready': return 4;
+      case 'quoting': return 2;
+      case 'purchased': return 3;
+      case 'shipping': return 4;
       case 'delivered': return 5;
       default: return 1;
     }
@@ -210,8 +232,10 @@ const EngineerDashboard = ({ user, onLogout }: EngineerDashboardProps) => {
                   </Badge>
                   <Badge variant="secondary">
                     {order.status === 'pending' ? 'Pendente' : 
-                     order.status === 'approved' ? 'Aprovado' : 
-                     order.status === 'rejected' ? 'Rejeitado' : 'Pendente'}
+                     order.status === 'quoting' ? 'Em Cotação' : 
+                     order.status === 'purchased' ? 'Comprado' :
+                     order.status === 'shipping' ? 'Saiu para Entrega' :
+                     order.status === 'delivered' ? 'Entregue/Recebido' : 'Pendente'}
                   </Badge>
                 </div>
 
