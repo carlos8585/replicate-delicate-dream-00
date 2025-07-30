@@ -46,7 +46,7 @@ const ManagerDashboard = ({ user, onLogout }: ManagerDashboardProps) => {
       if (usersError) throw usersError;
 
       setOrders(allOrders || []);
-      setMyOrders((allOrders || []).filter(order => order.responsible_id === user.id));
+      setMyOrders((allOrders || []).filter(order => order.responsible_id === user.id && order.status !== 'delivered'));
       setAvailableOrders((allOrders || []).filter(order => !order.responsible_id && order.status === 'pending'));
       setPendingUsers(users || []);
     } catch (error) {
